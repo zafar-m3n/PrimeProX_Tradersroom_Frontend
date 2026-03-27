@@ -100,7 +100,7 @@ const RegisterPage = () => {
     <AuthLayout>
       <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-lg p-6 w-full max-w-md mx-auto border border-gray-100 dark:border-gray-700 transition-all duration-300">
         <Heading className="text-center">
-          Register Now & Trade <span className="text-accent">With Predicta</span>
+          Register Now & Trade <span className="text-accent">With PrimeProX</span>
         </Heading>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
@@ -155,7 +155,7 @@ const RegisterPage = () => {
           <AccentButton
             type="submit"
             loading={isSubmitting}
-            text="Register with Predicta"
+            text="Register with PrimeProX"
             spinner={<Spinner color="white" />}
           />
 

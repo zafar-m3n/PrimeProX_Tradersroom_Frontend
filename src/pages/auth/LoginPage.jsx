@@ -72,7 +72,7 @@ const LoginPage = () => {
     <AuthLayout>
       <div className="bg-white dark:bg-gray-800 shadow-2xl rounded-lg p-6 w-full max-w-md mx-auto border border-gray-100 dark:border-gray-700 transition-all duration-300">
         <Heading className="text-center">
-          Welcome Back to <span className="text-accent">Predicta</span>
+          Welcome Back to <span className="text-accent">PrimeProX</span>
         </Heading>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">

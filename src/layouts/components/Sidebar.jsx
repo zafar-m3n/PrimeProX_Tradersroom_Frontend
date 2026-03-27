@@ -62,8 +62,8 @@ const Sidebar = ({ menuOpen, setMenuOpen }) => {
         ${menuOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0 md:relative md:z-40 md:flex flex-col`}
     >
-      <div className="flex justify-between items-center p-4 shadow-sm">
-        <img src={theme === "dark" ? logoWhite : logo} alt="Logo" className="h-8 w-auto" />
+      <div className="flex justify-between items-center p-2 shadow-sm">
+        <img src={theme === "dark" ? logoWhite : logo} alt="Logo" className="h-12 w-auto" />
       </div>
 
       {userRole === "client" && <SidebarWallet />}
