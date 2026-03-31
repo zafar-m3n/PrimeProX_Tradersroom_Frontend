@@ -2,6 +2,7 @@ import React from "react";
 import DefaultLayout from "@/layouts/DefaultLayout";
 import Icon from "@/components/ui/Icon";
 import Heading from "@/components/ui/Heading";
+import Notification from "@/components/ui/Notification";
 
 const downloads = [
   {
@@ -10,7 +11,7 @@ const downloads = [
     description: "Trade with full charting tools and fast execution on Windows.",
     icon: "mdi:windows",
     color: "text-blue-600",
-    link: "/downloads/STPTrade.mt5.terminal.setup.exe",
+    link: "/downloads/mt5managersetup.exe",
     button: "Download .exe",
   },
   {
@@ -19,7 +20,7 @@ const downloads = [
     description: "Trade on the go with our mobile Meta5Pro app for Android.",
     icon: "mdi:android",
     color: "text-green-600",
-    link: "/downloads/meta5pro.apk",
+    link: "/downloads/metatrader5.apk",
     button: "Download .apk",
   },
   {
@@ -34,6 +35,13 @@ const downloads = [
 ];
 
 const Platform = () => {
+  const handleClick = (id, link, event) => {
+    if (id === "web") {
+      event.preventDefault();
+      Notification.error("WebTrader is currently experiencing issues.");
+    }
+  };
+
   return (
     <DefaultLayout>
       <Heading>Download Our Trading Platform</Heading>
@@ -56,6 +64,7 @@ const Platform = () => {
               rel="noopener noreferrer"
               className="bg-accent text-white px-4 py-2 rounded font-medium hover:bg-accent/90 transition"
               download={id !== "web"}
+              onClick={(event) => handleClick(id, link, event)}
             >
               {button}
             </a>
