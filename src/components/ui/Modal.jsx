@@ -26,7 +26,6 @@ const Modal = ({
     <div className="font-dm-sans">
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={disableEscapeClose ? () => {} : onClose}>
-          {/* Overlay */}
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -57,21 +56,29 @@ const Modal = ({
               <Dialog.Panel
                 className={`relative bg-white dark:bg-gray-900 rounded-lg shadow-xl overflow-hidden w-full ${sizeClasses[size]} ${modalClass}`}
               >
-                {closeButton && (
-                  <button
-                    onClick={onClose}
-                    className="absolute top-3 right-3 text-gray-800 dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:outline-none"
-                  >
-                    <span className="sr-only">Close</span>✕
-                  </button>
+                {(title || closeButton) && (
+                  <div className="flex items-center justify-between gap-4 border-b border-gray-300 px-6 py-3 dark:border-gray-700">
+                    {title ? (
+                      <Dialog.Title className="font-dm-sans text-lg font-medium text-gray-900 dark:text-white">
+                        {title}
+                      </Dialog.Title>
+                    ) : (
+                      <div />
+                    )}
+
+                    {closeButton && (
+                      <button
+                        onClick={onClose}
+                        className="shrink-0 text-gray-800 hover:text-gray-700 focus:outline-none dark:text-gray-200 dark:hover:text-gray-400"
+                      >
+                        <span className="sr-only">Close</span>✕
+                      </button>
+                    )}
+                  </div>
                 )}
 
-                {title && (
-                  <Dialog.Title className="font-dm-sans text-lg font-medium text-gray-900 dark:text-white px-6 py-4 border-b border-gray-300 dark:border-gray-700">
-                    {title}
-                  </Dialog.Title>
-                )}
                 <div className="px-6 py-4 font-dm-sans text-gray-800 dark:text-gray-200">{children}</div>
+
                 {footer && (
                   <div className="px-6 py-4 border-t border-gray-300 dark:border-gray-700 font-dm-sans text-gray-800 dark:text-gray-200">
                     {footer}

@@ -10,7 +10,7 @@ import enLocale from "i18n-iso-countries/langs/en.json";
 
 countries.registerLocale(enLocale);
 
-const UserTable = ({ users, onEdit, onDelete, onView, currentPage, totalPages, onPageChange }) => {
+const UserTable = ({ users, onEdit, onDelete, onView, onApprove, currentPage, totalPages, onPageChange }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
@@ -80,6 +80,7 @@ const UserTable = ({ users, onEdit, onDelete, onView, currentPage, totalPages, o
             >
               <Icon icon="mdi:eye" width="18" className="text-gray-800 dark:text-gray-200" />
             </button>
+
             <button
               onClick={() => onEdit(user)}
               className="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
@@ -87,6 +88,17 @@ const UserTable = ({ users, onEdit, onDelete, onView, currentPage, totalPages, o
             >
               <Icon icon="mdi:pencil" width="18" className="text-gray-800 dark:text-gray-200" />
             </button>
+
+            {!user.email_verified && user.role !== "admin" && (
+              <button
+                onClick={() => onApprove(user)}
+                className="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                title="Approve"
+              >
+                <Icon icon="mdi:check-circle" width="18" className="text-gray-800 dark:text-gray-200" />
+              </button>
+            )}
+
             <button
               onClick={() => confirmDelete(user)}
               className="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"

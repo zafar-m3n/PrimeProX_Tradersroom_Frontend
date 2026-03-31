@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import DefaultLayout from "@/layouts/DefaultLayout";
 import UserTable from "./components/UserTable";
 import UserFormModal from "./components/UserFormModal";
+import ConfirmUserModal from "./components/ConfirmUserModal";
 import API from "@/services/index";
 import Notification from "@/components/ui/Notification";
 import Modal from "@/components/ui/Modal";
@@ -22,6 +23,10 @@ const ManageUsers = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [userToApprove, setUserToApprove] = useState(null);
+  const [approveLoading, setApproveLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -61,6 +66,31 @@ const ManageUsers = () => {
 
   const handleView = (user) => {
     navigate(`/admin/users/${user.id}`);
+  };
+
+  const handleApprove = (user) => {
+    setUserToApprove(user);
+    setIsApproveModalOpen(true);
+  };
+
+  const handleApproveConfirm = async () => {
+    if (!userToApprove) return;
+
+    setApproveLoading(true);
+    try {
+      const res = await API.private.approveUserAccount(userToApprove.id);
+      if (res.status === 200 && res.data.code === "OK") {
+        Notification.success(res.data.data.message || "User approved successfully.");
+        setIsApproveModalOpen(false);
+        setUserToApprove(null);
+        fetchUsers(currentPage);
+      }
+    } catch (error) {
+      const msg = error.response?.data?.error || "Failed to approve user.";
+      Notification.error(msg);
+    } finally {
+      setApproveLoading(false);
+    }
   };
 
   const handleDelete = async (user) => {
@@ -116,6 +146,7 @@ const ManageUsers = () => {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onView={handleView}
+          onApprove={handleApprove}
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
@@ -135,6 +166,18 @@ const ManageUsers = () => {
           isEdit={isEdit}
         />
       </Modal>
+
+      <ConfirmUserModal
+        isOpen={isApproveModalOpen}
+        onClose={() => {
+          if (approveLoading) return;
+          setIsApproveModalOpen(false);
+          setUserToApprove(null);
+        }}
+        onConfirm={handleApproveConfirm}
+        user={userToApprove}
+        loading={approveLoading}
+      />
     </DefaultLayout>
   );
 };

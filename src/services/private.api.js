@@ -68,7 +68,7 @@ const toggleDepositMethodStatus = async (id, status) => {
     { status },
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -84,7 +84,7 @@ const approveDepositRequest = async (id) => {
     {},
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -94,7 +94,7 @@ const rejectDepositRequest = async (id, admin_note) => {
     { admin_note },
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -205,7 +205,7 @@ const approveKycDocument = async (id) => {
     {},
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -215,7 +215,7 @@ const rejectKycDocument = async (id, admin_note) => {
     { admin_note },
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -252,6 +252,16 @@ const deleteUser = async (id) => {
   return await instance.apiClient.delete(`/api/v1/admin/users/${id}`, {
     headers: instance.defaultHeaders(),
   });
+};
+
+const approveUserAccount = async (id) => {
+  return await instance.apiClient.patch(
+    `/api/v1/admin/users/${id}/approve`,
+    {},
+    {
+      headers: instance.defaultHeaders(),
+    },
+  );
 };
 
 /* ========================== */
@@ -292,7 +302,7 @@ const approveWithdrawalRequest = async (id) => {
     {},
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -302,7 +312,7 @@ const rejectWithdrawalRequest = async (id, admin_note) => {
     { admin_note },
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -360,7 +370,7 @@ const closeSupportTicket = async (id) => {
     {},
     {
       headers: instance.defaultHeaders(),
-    }
+    },
   );
 };
 
@@ -402,6 +412,7 @@ const privateAPI = {
   getUserById,
   updateUser,
   deleteUser,
+  approveUserAccount,
 
   // Client
   getActiveDepositMethods,
