@@ -72,9 +72,13 @@ const toggleDepositMethodStatus = async (id, status) => {
   );
 };
 
-const getAllDepositRequests = async () => {
+const getAllDepositRequests = async (page = 1, limit = 10) => {
   return await instance.apiClient.get("/api/v1/admin/deposit-requests", {
     headers: instance.defaultHeaders(),
+    params: {
+      page,
+      limit,
+    },
   });
 };
 
