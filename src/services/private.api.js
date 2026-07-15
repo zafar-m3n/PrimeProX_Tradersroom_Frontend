@@ -141,6 +141,17 @@ const getWithdrawalHistory = async () => {
 };
 
 /* ========================== */
+/* Client: Wallet Adjustments */
+/* ========================== */
+
+const getAdjustmentHistory = async (page = 1) => {
+  return await instance.apiClient.get("/api/v1/client/wallet/adjustments", {
+    headers: instance.defaultHeaders(),
+    params: { page },
+  });
+};
+
+/* ========================== */
 /* Client: Profile            */
 /* ========================== */
 
@@ -266,6 +277,22 @@ const approveUserAccount = async (id) => {
       headers: instance.defaultHeaders(),
     },
   );
+};
+
+/* ========================== */
+/* Admin: Wallet Adjustments  */
+/* ========================== */
+
+const getUserWalletBalance = async (userId) => {
+  return await instance.apiClient.get(`/api/v1/admin/users/${userId}/wallet/balance`, {
+    headers: instance.defaultHeaders(),
+  });
+};
+
+const adjustUserBalance = async (userId, data) => {
+  return await instance.apiClient.post(`/api/v1/admin/users/${userId}/wallet/adjustment`, data, {
+    headers: instance.defaultHeaders(),
+  });
 };
 
 /* ========================== */
@@ -418,6 +445,10 @@ const privateAPI = {
   deleteUser,
   approveUserAccount,
 
+  // Admin Wallet Adjustments
+  getUserWalletBalance,
+  adjustUserBalance,
+
   // Client
   getActiveDepositMethods,
   createDepositRequest,
@@ -426,6 +457,9 @@ const privateAPI = {
   getWalletBalance,
   getDepositHistory,
   getWithdrawalHistory,
+
+  // Client Wallet Adjustments
+  getAdjustmentHistory,
 
   // Client Profile
   getProfile,

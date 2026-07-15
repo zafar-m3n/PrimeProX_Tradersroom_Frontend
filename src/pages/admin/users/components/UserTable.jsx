@@ -10,7 +10,19 @@ import enLocale from "i18n-iso-countries/langs/en.json";
 
 countries.registerLocale(enLocale);
 
-const UserTable = ({ users, onEdit, onDelete, onView, onApprove, currentPage, totalPages, onPageChange }) => {
+const UserTable = ({
+  users,
+  onEdit,
+  onDelete,
+  onView,
+  onApprove,
+  onAdjustBalance,
+  balances,
+  balancesLoading,
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
@@ -47,6 +59,7 @@ const UserTable = ({ users, onEdit, onDelete, onView, onApprove, currentPage, to
     { key: "phone_number", label: "Phone" },
     { key: "country_code", label: "Country" },
     { key: "role", label: "Role" },
+    { key: "balance", label: "Wallet Balance" },
     { key: "promo_code", label: "Promo Code" },
     { key: "email_verified", label: "Verified" },
     { key: "actions", label: "Actions" },
@@ -60,6 +73,9 @@ const UserTable = ({ users, onEdit, onDelete, onView, onApprove, currentPage, to
         return getCountryName(user.country_code);
       case "role":
         return <Badge text={user.role} color={user.role === "admin" ? "blue" : "gray"} size="sm" />;
+      case "balance":
+        if (balancesLoading) return <span className="text-gray-500 dark:text-gray-400">Loading...</span>;
+        return balances[user.id] !== undefined ? `$${balances[user.id].toFixed(2)}` : "—";
       case "promo_code":
         return user.promo_code || "N/A";
       case "email_verified":
@@ -96,6 +112,16 @@ const UserTable = ({ users, onEdit, onDelete, onView, onApprove, currentPage, to
                 title="Approve"
               >
                 <Icon icon="mdi:check-circle" width="18" className="text-gray-800 dark:text-gray-200" />
+              </button>
+            )}
+
+            {user.role !== "admin" && (
+              <button
+                onClick={() => onAdjustBalance(user)}
+                className="inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                title="Adjust Balance"
+              >
+                <Icon icon="mdi:wallet-plus" width="18" className="text-gray-800 dark:text-gray-200" />
               </button>
             )}
 

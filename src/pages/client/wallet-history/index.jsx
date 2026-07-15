@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import DefaultLayout from "@/layouts/DefaultLayout";
 import DepositHistoryTable from "./components/DepositHistoryTable";
 import WithdrawalHistoryTable from "./components/WithdrawalHistoryTable";
+import AdjustmentHistoryTable from "./components/AdjustmentHistoryTable";
 import API from "@/services/index";
 import Notification from "@/components/ui/Notification";
 import Heading from "@/components/ui/Heading";
@@ -13,6 +14,7 @@ import GrayButton from "@/components/ui/GrayButton";
 const WalletHistory = () => {
   const [deposits, setDeposits] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
+  const [adjustments, setAdjustments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("deposits");
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,6 +25,8 @@ const WalletHistory = () => {
       fetchDepositHistory(1);
     } else if (activeTab === "withdrawals") {
       fetchWithdrawalHistory(1);
+    } else if (activeTab === "adjustments") {
+      fetchAdjustmentHistory(1);
     }
   }, [activeTab]);
 
@@ -62,12 +66,32 @@ const WalletHistory = () => {
     }
   };
 
+  const fetchAdjustmentHistory = async (page = 1) => {
+    setLoading(true);
+    try {
+      const res = await API.private.getAdjustmentHistory(page);
+      if (res.data.code === "OK") {
+        setAdjustments(res.data.data.adjustments || []);
+        setCurrentPage(res.data.data.page || 1);
+        setTotalPages(res.data.data.totalPages || 1);
+      } else {
+        Notification.error(res.data.error || "Failed to load adjustment history.");
+      }
+    } catch (error) {
+      Notification.error(error.response?.data?.error || "Failed to load adjustment history.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
     if (activeTab === "deposits") {
       fetchDepositHistory(page);
-    } else {
+    } else if (activeTab === "withdrawals") {
       fetchWithdrawalHistory(page);
+    } else {
+      fetchAdjustmentHistory(page);
     }
   };
 
@@ -99,10 +123,28 @@ const WalletHistory = () => {
             <GrayButton onClick={() => setActiveTab("withdrawals")} text="Withdrawals" />
           </div>
         )}
+
+        {activeTab === "adjustments" ? (
+          <div className="w-fit">
+            <AccentButton onClick={() => setActiveTab("adjustments")} text="Adjustments" />
+          </div>
+        ) : (
+          <div className="w-fit">
+            <GrayButton onClick={() => setActiveTab("adjustments")} text="Adjustments" />
+          </div>
+        )}
       </div>
 
       {loading ? (
-        <Spinner message={activeTab === "deposits" ? "Loading deposit history..." : "Loading withdrawal history..."} />
+        <Spinner
+          message={
+            activeTab === "deposits"
+              ? "Loading deposit history..."
+              : activeTab === "withdrawals"
+              ? "Loading withdrawal history..."
+              : "Loading adjustment history..."
+          }
+        />
       ) : activeTab === "deposits" ? (
         <DepositHistoryTable
           deposits={deposits}
@@ -110,9 +152,16 @@ const WalletHistory = () => {
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      ) : (
+      ) : activeTab === "withdrawals" ? (
         <WithdrawalHistoryTable
           withdrawals={withdrawals}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      ) : (
+        <AdjustmentHistoryTable
+          adjustments={adjustments}
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}

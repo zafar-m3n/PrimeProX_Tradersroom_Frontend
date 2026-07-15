@@ -4,6 +4,7 @@ import DefaultLayout from "@/layouts/DefaultLayout";
 import UserTable from "./components/UserTable";
 import UserFormModal from "./components/UserFormModal";
 import ConfirmUserModal from "./components/ConfirmUserModal";
+import AdjustBalanceModal from "./components/AdjustBalanceModal";
 import API from "@/services/index";
 import Notification from "@/components/ui/Notification";
 import Modal from "@/components/ui/Modal";
@@ -28,6 +29,10 @@ const ManageUsers = () => {
   const [userToApprove, setUserToApprove] = useState(null);
   const [approveLoading, setApproveLoading] = useState(false);
 
+  const [adjustBalanceModal, setAdjustBalanceModal] = useState({ open: false, user: null });
+  const [balances, setBalances] = useState({});
+  const [balancesLoading, setBalancesLoading] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -40,8 +45,10 @@ const ManageUsers = () => {
     try {
       const res = await API.private.getAllUsers({ page });
       if (res.status === 200 && res.data.code === "OK") {
-        setUsers(res.data.data.users || []);
+        const fetchedUsers = res.data.data.users || [];
+        setUsers(fetchedUsers);
         setTotalPages(res.data.data.totalPages);
+        fetchBalances(fetchedUsers);
       }
     } catch (error) {
       const msg = error.response?.data?.error || "Failed to fetch users.";
@@ -50,6 +57,28 @@ const ManageUsers = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchBalances = async (usersList) => {
+    setBalancesLoading(true);
+    try {
+      const results = await Promise.allSettled(usersList.map((u) => API.private.getUserWalletBalance(u.id)));
+
+      const nextBalances = {};
+      results.forEach((result, idx) => {
+        if (result.status === "fulfilled" && result.value.status === 200 && result.value.data.code === "OK") {
+          nextBalances[usersList[idx].id] = parseFloat(result.value.data.data.balance) || 0;
+        }
+      });
+
+      setBalances(nextBalances);
+    } finally {
+      setBalancesLoading(false);
+    }
+  };
+
+  const handleAdjustBalanceSuccess = (userId, newBalance) => {
+    setBalances((prev) => ({ ...prev, [userId]: newBalance }));
   };
 
   const handleAdd = () => {
@@ -71,6 +100,10 @@ const ManageUsers = () => {
   const handleApprove = (user) => {
     setUserToApprove(user);
     setIsApproveModalOpen(true);
+  };
+
+  const handleAdjustBalance = (user) => {
+    setAdjustBalanceModal({ open: true, user });
   };
 
   const handleApproveConfirm = async () => {
@@ -147,6 +180,9 @@ const ManageUsers = () => {
           onDelete={handleDelete}
           onView={handleView}
           onApprove={handleApprove}
+          onAdjustBalance={handleAdjustBalance}
+          balances={balances}
+          balancesLoading={balancesLoading}
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
@@ -177,6 +213,13 @@ const ManageUsers = () => {
         onConfirm={handleApproveConfirm}
         user={userToApprove}
         loading={approveLoading}
+      />
+
+      <AdjustBalanceModal
+        isOpen={adjustBalanceModal.open}
+        onClose={() => setAdjustBalanceModal({ open: false, user: null })}
+        user={adjustBalanceModal.user}
+        onSuccess={handleAdjustBalanceSuccess}
       />
     </DefaultLayout>
   );
