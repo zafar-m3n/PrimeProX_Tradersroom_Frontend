@@ -126,11 +126,11 @@ const WalletHistory = () => {
 
         {activeTab === "adjustments" ? (
           <div className="w-fit">
-            <AccentButton onClick={() => setActiveTab("adjustments")} text="Adjustments" />
+            <AccentButton onClick={() => setActiveTab("adjustments")} text="Profit/Loss" />
           </div>
         ) : (
           <div className="w-fit">
-            <GrayButton onClick={() => setActiveTab("adjustments")} text="Adjustments" />
+            <GrayButton onClick={() => setActiveTab("adjustments")} text="Profit/Loss" />
           </div>
         )}
       </div>
@@ -141,8 +141,8 @@ const WalletHistory = () => {
             activeTab === "deposits"
               ? "Loading deposit history..."
               : activeTab === "withdrawals"
-              ? "Loading withdrawal history..."
-              : "Loading adjustment history..."
+                ? "Loading withdrawal history..."
+                : "Loading adjustment history..."
           }
         />
       ) : activeTab === "deposits" ? (
