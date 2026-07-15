@@ -1,7 +1,7 @@
 import React from "react";
 import Table from "@/components/ui/Table";
 import Pagination from "@/components/ui/Pagination";
-import { formatDate } from "@/utils/formatDate";
+import { formatDateWithoutTime } from "@/utils/formatDate";
 
 const AdjustmentHistoryTable = ({ adjustments, currentPage, totalPages, onPageChange }) => {
   const columns = [
@@ -13,7 +13,7 @@ const AdjustmentHistoryTable = ({ adjustments, currentPage, totalPages, onPageCh
   const renderCell = (adjustment, col) => {
     switch (col.key) {
       case "createdAt":
-        return formatDate(adjustment.created_at);
+        return formatDateWithoutTime(adjustment.created_at);
       case "amount": {
         const amount = parseFloat(adjustment.amount);
         const isCredit = amount >= 0;
